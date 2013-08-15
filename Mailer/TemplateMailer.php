@@ -28,7 +28,6 @@ class TemplateMailer
 
     public function send($template, $to, array $params, $commonParams)
     {
-        $templateHash = $template; // TODO get template hash
-        $this->client->send(new TemplateMessage($templateHash, $to, $params, $commonParams));
+        $this->client->send(new TemplateMessage($template, $to, $params, $commonParams));
     }
 }
