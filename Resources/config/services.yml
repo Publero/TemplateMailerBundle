@@ -1,0 +1,33 @@
+params:
+    publero_template_mailer.gearman_client.class: Net\Gearman\Client
+    publero_template_mailer.client.message.gearman.class: Publero\TemplateMailerBundle\Client\GearmanMessageMailerClient
+    publero_template_mailer.client.template.gearman.class: Publero\TemplateMailerBundle\Client\GearmanTemplateMailerClient
+    publero_template_mailer.mailer.twig.class: Publero\TemplateMailerBundle\Mailer\TwigMailer
+    publero_template_mailer.mailer.template.class: Publero\TemplateMailerBundle\Mailer\TemplateMailer
+
+services:
+    publero_template_mailer.gearman_client:
+        class: %publero_template_mailer.gearman_client.class%
+        public: false
+
+    publero_template_mailer.client.message.gearman:
+        class: %publero_template_mailer.client.message.gearman.class%
+        arguments: [ @publero_template_mailer.gearman_client ]
+
+    publero_template_mailer.client.template.gearman:
+        class: %publero_template_mailer.client.template.gearman.class%
+        arguments: [ @publero_template_mailer.gearman_client ]
+
+    publero_template_mailer.client.message:
+        alias: publero_template_mailer.client.message.gearman
+
+    publero_template_mailer.client.template:
+        alias: publero_template_mailer.client.template.gearman
+
+    publero_template_mailer.mailer.twig:
+        class: %publero_template_mailer.mailer.twig.class%
+        arguments: [ @publero_template_mailer.client.message, @twig ]
+
+    publero_template_mailer.mailer.template:
+        class: %publero_template_mailer.mailer.template.class%
+        arguments: [ @publero_template_mailer.client.template ]
