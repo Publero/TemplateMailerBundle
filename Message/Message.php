@@ -49,6 +49,7 @@ class Message
     {
         $this->subject = $subject;
         $this->htmlBody = $htmlBody;
+        $this->textBody = $textBody;
         $this->to = $to;
         $this->sender = $sender;
     }
