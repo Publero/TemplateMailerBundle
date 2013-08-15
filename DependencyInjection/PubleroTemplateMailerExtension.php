@@ -27,7 +27,7 @@ class PubleroTemplateMailerExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services,yml');
+        $loader->load('services.yml');
 
         $gearmanClientDefinition = $container->getDefinition('publero_template_mailer.gearman_client');
         $gearmanClientDefinition->addMethodCall('addServers', array($config['gearman_servers']));
