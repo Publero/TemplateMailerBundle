@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class FOSUserExtension extends Extension
+class PubleroTemplateMailerExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -27,7 +27,7 @@ class FOSUserExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services,yml');
+        $loader->load('services.yml');
 
         $gearmanClientDefinition = $container->getDefinition('publero_template_mailer.gearman_client');
         $gearmanClientDefinition->addMethodCall('addServers', array($config['gearman_servers']));

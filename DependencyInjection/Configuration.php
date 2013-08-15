@@ -24,22 +24,12 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('gearman_servers')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function($v) { return array($v); })
-                    ->end()
-                    ->prototype('array')
-                        ->beforeNormalization()
-                            ->ifString()
-                            ->then(function($v) { return array('host' => $v); })
-                        ->end()
-                        ->children()
-                            ->scalarNode('host')->isRequired()->end()
-                            ->integerNode('port')->defaultNull()->end()
-                        ->end()
-                    ->end()
+                    ->prototype('scalar')
+                    ->isRequired()
                 ->end()
             ->end()
         ;
+
+        return $treeBuilder;
     }
 }
