@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
                             ->integerNode('port')->defaultNull()->end()
                         ->end()
                     ->end()
+                    ->isRequired()
                 ->end()
             ->end()
         ;
