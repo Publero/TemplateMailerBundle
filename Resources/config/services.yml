@@ -1,4 +1,4 @@
-params:
+parameters:
     publero_template_mailer.gearman_client.class: Net\Gearman\Client
     publero_template_mailer.client.message.gearman.class: Publero\TemplateMailerBundle\Client\GearmanMessageMailerClient
     publero_template_mailer.client.template.gearman.class: Publero\TemplateMailerBundle\Client\GearmanTemplateMailerClient
