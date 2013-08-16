@@ -26,7 +26,13 @@ class TemplateMailer implements Mailer
         $this->client = $client;
     }
 
-    public function send($template, $to, array $params, $commonParams)
+    /**
+     * @param string $template      The name of template to send
+     * @param string|array $to      Recipients or array of recipients
+     * @param array $params         Template parameters
+     * @param bool $commonParams    Whether the params are common for all recipients (array of arrays is expected)
+     */
+    public function send($template, $to, array $params, $commonParams = true)
     {
         $this->client->send(new TemplateMessage($template, $to, $params, $commonParams));
     }
