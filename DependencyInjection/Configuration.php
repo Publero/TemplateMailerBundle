@@ -24,8 +24,15 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('gearman_servers')
-                    ->prototype('scalar')
                     ->isRequired()
+                    ->prototype('scalar')
+                        ->validate()
+                            ->ifTrue(function($v) {
+                                return !is_string($v) || !preg_match('/^[^:\/]*(\:\d+)?$/', $v);
+                            })
+                            ->thenInvalid('Gearman server must be in form host[:port]')
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;
