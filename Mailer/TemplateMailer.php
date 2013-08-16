@@ -14,7 +14,7 @@ namespace Publero\TemplateMailerBundle\Mailer;
 use Publero\TemplateMailerBundle\Client\TemplateMailerClient;
 use Publero\TemplateMailerBundle\Message\TemplateMessage;
 
-class TemplateMailer
+class TemplateMailer implements Mailer
 {
     /**
      * @var TemplateMailerClient
