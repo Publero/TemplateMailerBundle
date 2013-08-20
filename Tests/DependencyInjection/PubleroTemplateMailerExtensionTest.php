@@ -145,10 +145,6 @@ publero_template_mailer:
         $this->assertNotNull($definition->getArgument(2));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Invalid configuration for path "publero_template_mailer.template_storage": doctrine template storage must have configured backend
-     */
     public function testTemplateStorageConfigurationDoctrineNoBackend()
     {
         $config = $this->parser->parse('
@@ -160,6 +156,13 @@ publero_template_mailer:
         ');
 
         $this->extension->load($config, $this->container);
+
+        $this->assertTrue($this->container->hasAlias('publero_template_mailer.template.storage'));
+        $this->assertTrue($this->container->hasParameter("publero_template_mailer.backend.orm"));
+        $this->assertEquals('publero_template_mailer.template.storage.doctrine', (string) $this->container->getAlias('publero_template_mailer.template.storage'));
+
+        $definition = $this->container->getDefinition('publero_template_mailer.template.storage.doctrine');
+        $this->assertNotNull($definition->getArgument(2));
     }
 
     /**

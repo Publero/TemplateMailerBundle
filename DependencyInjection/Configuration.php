@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->enumNode('type')->values(array(null, 'doctrine', 'service'))->defaultNull()->end()
-                        ->enumNode('backend')->values(array('orm', 'mongodb'))->defaultNull()->end()
+                        ->enumNode('backend')->values(array('orm', 'mongodb'))->defaultValue('orm')->end()
                         ->scalarNode('id')->defaultNull()->end()
                     ->end()
                     ->validate()

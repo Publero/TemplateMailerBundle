@@ -81,7 +81,7 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     public function update($code = null)
     {
-        if (null !== null) {
+        if (null !== $code) {
             $template = $this->getTemplateByCode($code);
             $hash = $this->persistRemote($code, $template->getSource());
             $template->setHash($hash);
