@@ -50,7 +50,7 @@ class PubleroTemplateMailerExtension extends Extension
                             break;
                     }
                     if (!empty($objectManagerId)) {
-                        $definition->replaceArgument(2, new Reference($objectManagerId));
+                        $definition->replaceArgument(1, new Reference($objectManagerId));
                     }
                     break;
                 case 'service':
