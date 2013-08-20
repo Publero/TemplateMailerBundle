@@ -206,6 +206,35 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->storage->isFresh($code));
     }
 
+    public function testUpdate()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testUpdateAll()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage template 'template_code' is not stored
+     */
+    public function testUpdateNotStored()
+    {
+        $code = 'template_code';
+        $hash = 'hash';
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue(null))
+        ;
+
+        $this->storage->update($code);
+    }
+
     public function testAssignHash()
     {
         $code = 'code';

@@ -74,8 +74,15 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     public function isFresh($code)
     {
-        $template = $this->getTemplateByCode($code);
+        return $this->isTemplateFresh($this->getTemplateByCode($code));
+    }
 
+    /**
+     * @param Template $template
+     * @return bool
+     */
+    protected function isTemplateFresh(Template $template)
+    {
         return $template->getChecksum() === sha1(
             $template->getSource() .
             json_encode($template->getDefaultParams()) .
@@ -88,6 +95,9 @@ class DoctrineTemplateStorage extends TemplateStorage
     {
         if (null !== $code) {
             $template = $this->getTemplateByCode($code);
+            if ($this->isTemplateFresh($template)) {
+                return;
+            }
             $hash = $this->persistRemote($code, $template->getSource(), $template->getDefaultParams());
             $template->setHash($hash);
             $template->setChecksum(sha1(
@@ -98,6 +108,9 @@ class DoctrineTemplateStorage extends TemplateStorage
             ));
         } else {
             foreach ($this->getTemplateRepository()->findAll() as $template) {
+                if ($this->isTemplateFresh($template)) {
+                    continue;
+                }
                 $hash = $this->persistRemote($template->getSource(), $template->getSource());
                 $template->setHash($hash);
                 $template->setChecksum(sha1(
