@@ -61,11 +61,14 @@ class Template
     }
 
     /**
-     * @param $code
+     * @param string $code
+     * @return self
      */
     public function setCode($code)
     {
         $this->code = $code;
+
+        return $this;
     }
 
     /**
@@ -77,11 +80,14 @@ class Template
     }
 
     /**
-     * @param $hash
+     * @param string $hash
+     * @return self
      */
     public function setHash($hash)
     {
         $this->hash = $hash;
+
+        return $this;
     }
 
     /**
@@ -93,11 +99,14 @@ class Template
     }
 
     /**
-     * @param $source
+     * @param string $source
+     * @return self
      */
     public function setSource($source)
     {
         $this->source = $source;
+
+        return $this;
     }
 
     /**
@@ -110,10 +119,13 @@ class Template
 
     /**
      * @param array $defaultParams
+     * @return self
      */
     public function setDefaultParams(array $defaultParams)
     {
         $this->defaultParams = $defaultParams;
+
+        return $this;
     }
 
     /**
@@ -125,10 +137,13 @@ class Template
     }
 
     /**
-     * @param $checksum
+     * @param string $checksum
+     * @return self
      */
     public function setChecksum($checksum)
     {
         $this->checksum = $checksum;
+
+        return $this;
     }
 }

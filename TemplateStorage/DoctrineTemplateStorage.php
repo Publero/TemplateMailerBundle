@@ -64,7 +64,7 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     public function getSource($code)
     {
-        return $this->getTemplateByCode($code)->getCode();
+        return $this->getTemplateByCode($code)->getSource();
     }
 
     public function isStored($code)
@@ -79,7 +79,8 @@ class DoctrineTemplateStorage extends TemplateStorage
         return $template->getChecksum() === sha1(
             $template->getSource() .
             json_encode($template->getDefaultParams()) .
-            $template->getCode() . $template->getHash()
+            $template->getCode() .
+            $template->getHash()
         );
     }
 
@@ -120,7 +121,7 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function persist($code, $source, array $defaultParams = array())
     {
         $template = $this->getTemplateRepository()->findOneByCode($code);
-        if (null !== $template) {
+        if (null === $template) {
             $template = new Template();
             $template->setCode($code);
 
