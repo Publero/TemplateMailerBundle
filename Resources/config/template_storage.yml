@@ -1,0 +1,22 @@
+parameters:
+    publero_template_mailer.mailer.stored_template.class: Publero\TemplateMailerBundle\Mailer\StoredTemplateMailer
+    publero_template_mailer.template.storage.abstract.class: Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage
+    publero_template_mailer.template.storage.doctrine.class: Publero\TemplateMailerBundle\TemplateStorage\DoctrineTemplateStorage
+
+services:
+    publero_template_mailer.mailer.stored_template:
+        class: %publero_template_mailer.mailer.stored_template.class%
+        arguments: [ @publero_template_mailer.client.template, @publero_template_mailer.template.storage ]
+
+    publero_template_mailer.template.storage.abstract:
+        class: %publero_template_mailer.template.storage.abstract.class%
+        arguments: [ @publero_template_mailer.client.remote_storage ]
+        abstract: true
+
+    publero_template_mailer.template.storage.doctrine:
+        class: %publero_template_mailer.template.storage.doctrine.class%
+        parent: publero_template_mailer.template.storage.abstract
+        arguments: [ ~ ] # this argument will be replaced with object manager based on the configuration
+
+    publero_template_mailer.template.storage:
+        alias: publero_template_mailer.template.storage.doctrine

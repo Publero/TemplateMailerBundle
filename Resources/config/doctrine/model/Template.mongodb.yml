@@ -1,0 +1,17 @@
+Publero\TemplateMailerBundle\Model\Template:
+    type: document
+    fields:
+        id:
+            id: true
+        code:
+            type: string
+            unique:
+                order: desc
+        hash:
+            type: string
+            unique:
+                order: desc
+        source:
+            type: string
+        checksum:
+            type: string

@@ -1,6 +1,7 @@
 parameters:
     publero_template_mailer.gearman_client.class: Net\Gearman\Client
     publero_template_mailer.client.message.gearman.class: Publero\TemplateMailerBundle\Client\GearmanMessageMailerClient
+    publero_template_mailer.client.remote_storage.gearman.class: Publero\TemplateMailerBundle\Client\GearmanRemoteStorageClient
     publero_template_mailer.client.template.gearman.class: Publero\TemplateMailerBundle\Client\GearmanTemplateMailerClient
     publero_template_mailer.mailer.twig.class: Publero\TemplateMailerBundle\Mailer\TwigMailer
     publero_template_mailer.mailer.template.class: Publero\TemplateMailerBundle\Mailer\TemplateMailer
@@ -14,12 +15,28 @@ services:
         class: %publero_template_mailer.client.message.gearman.class%
         arguments: [ @publero_template_mailer.gearman_client ]
 
+    publero_template_mailer.client.remote_storage.gearman:
+        class: %publero_template_mailer.client.remote_storage.gearman.class%
+        arguments: [ @publero_template_mailer.gearman_client ]
+
     publero_template_mailer.client.template.gearman:
         class: %publero_template_mailer.client.template.gearman.class%
         arguments: [ @publero_template_mailer.gearman_client ]
 
     publero_template_mailer.client.message:
         alias: publero_template_mailer.client.message.gearman
+
+    publero_template_mailer.client.remote_storage:
+        alias: publero_template_mailer.client.remote_storage.gearman
+
+    publero_template_mailer.client.template:
+        alias: publero_template_mailer.client.template.gearman
+
+    publero_template_mailer.client.message:
+        alias: publero_template_mailer.client.message.gearman
+
+    publero_template_mailer.client.remote_storage:
+        alias: publero_template_mailer.client.remote_storage.gearman
 
     publero_template_mailer.client.template:
         alias: publero_template_mailer.client.template.gearman

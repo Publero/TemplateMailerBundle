@@ -25,6 +25,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('gearman_servers')
                     ->isRequired()
+                    ->cannotBeEmpty()
                     ->prototype('scalar')
                         ->validate()
                             ->ifTrue(function($v) {
@@ -32,6 +33,26 @@ class Configuration implements ConfigurationInterface
                             })
                             ->thenInvalid('Gearman server must be in form host[:port]')
                         ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('template_storage')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('type')->values(array(null, 'doctrine', 'service'))->defaultNull()->end()
+                        ->enumNode('backend')->values(array('orm', 'mongodb'))->defaultNull()->end()
+                        ->scalarNode('id')->defaultNull()->end()
+                    ->end()
+                    ->validate()
+                        ->ifTrue(function($v) {
+                            return 'doctrine' === $v['type'] && empty($v['backend']);
+                        })
+                        ->thenInvalid('doctrine template storage must have configured backend')
+                    ->end()
+                    ->validate()
+                        ->ifTrue(function($v) {
+                            return 'service' === $v['type'] && empty($v['id']);
+                        })
+                        ->thenInvalid('custom template storage must have configured service id')
                     ->end()
                 ->end()
             ->end()

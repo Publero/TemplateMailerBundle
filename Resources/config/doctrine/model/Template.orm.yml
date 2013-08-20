@@ -1,0 +1,23 @@
+Publero\TemplateMailerBundle\Model\Template:
+    type: entity
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        code:
+            type: string
+            unique: true
+        hash:
+            type: string
+            unique: true
+            nullable: true
+        source:
+            type: text
+        checksum:
+            type: string
+            nullable: true
+    lifecycleCallbacks:
+        prePersist: [ preUpdate ]
+        preUpdate: [ preUpdate ]
