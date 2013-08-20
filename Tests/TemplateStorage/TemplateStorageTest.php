@@ -40,11 +40,34 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
     {
         $code = 'code';
         $source = 'source';
+        $hash = 'hash';
+        $newHash = 'new_hash';
+
+        $this->storage
+            ->expects($this->once())
+            ->method('isStored')
+            ->with($code)
+            ->will($this->returnValue(true))
+        ;
+
+        $this->storage
+            ->expects($this->once())
+            ->method('getHash')
+            ->with($code)
+            ->will($this->returnValue($hash))
+        ;
 
         $this->client
             ->expects($this->once())
             ->method('upload')
-            ->with($code, $source)
+            ->with($source, array(), $hash)
+            ->will($this->returnValue($newHash))
+        ;
+
+        $this->storage
+            ->expects($this->once())
+            ->method('assignHash')
+            ->with($code, $newHash)
         ;
 
         $this->storage->persistRemote($code, $source);

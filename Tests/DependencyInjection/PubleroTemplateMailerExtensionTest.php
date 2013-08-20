@@ -142,7 +142,7 @@ publero_template_mailer:
         $this->assertEquals('publero_template_mailer.template.storage.doctrine', (string) $this->container->getAlias('publero_template_mailer.template.storage'));
 
         $definition = $this->container->getDefinition('publero_template_mailer.template.storage.doctrine');
-        $this->assertNotNull($definition->getArgument(2));
+        $this->assertNotNull($definition->getArgument(1));
     }
 
     public function testTemplateStorageConfigurationDoctrineNoBackend()
@@ -162,7 +162,7 @@ publero_template_mailer:
         $this->assertEquals('publero_template_mailer.template.storage.doctrine', (string) $this->container->getAlias('publero_template_mailer.template.storage'));
 
         $definition = $this->container->getDefinition('publero_template_mailer.template.storage.doctrine');
-        $this->assertNotNull($definition->getArgument(2));
+        $this->assertNotNull($definition->getArgument(1));
     }
 
     /**
