@@ -13,5 +13,7 @@ Publero\TemplateMailerBundle\Model\Template:
                 order: desc
         source:
             type: string
+        defaultParams:
+            type: hash
         checksum:
             type: string

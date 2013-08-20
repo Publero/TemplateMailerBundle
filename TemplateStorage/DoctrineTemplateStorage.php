@@ -76,21 +76,35 @@ class DoctrineTemplateStorage extends TemplateStorage
     {
         $template = $this->getTemplateByCode($code);
 
-        return sha1($template->getSource() . $template->getCode() . $template->getHash()) === $template->getChecksum();
+        return $template->getChecksum() === sha1(
+            $template->getSource() .
+            json_encode($template->getDefaultParams()) .
+            $template->getCode() . $template->getHash()
+        );
     }
 
     public function update($code = null)
     {
         if (null !== $code) {
             $template = $this->getTemplateByCode($code);
-            $hash = $this->persistRemote($code, $template->getSource());
+            $hash = $this->persistRemote($code, $template->getSource(), $template->getDefaultParams());
             $template->setHash($hash);
-            $template->setChecksum(sha1($template->getSource() . $code . $hash));
+            $template->setChecksum(sha1(
+                $template->getSource() .
+                $code .
+                json_encode($template->getDefaultParams()) .
+                $hash
+            ));
         } else {
             foreach ($this->getTemplateRepository()->findAll() as $template) {
                 $hash = $this->persistRemote($template->getSource(), $template->getSource());
                 $template->setHash($hash);
-                $template->setChecksum(sha1($template->getSource() . $code . $hash));
+                $template->setChecksum(sha1(
+                    $template->getSource() .
+                    $code .
+                    json_encode($template->getDefaultParams()) .
+                    $hash
+                ));
             }
         }
 
@@ -103,16 +117,18 @@ class DoctrineTemplateStorage extends TemplateStorage
         $this->manager->flush();
     }
 
-    public function persist($code, $source)
+    public function persist($code, $source, array $defaultParams = array())
     {
         $template = $this->getTemplateRepository()->findOneByCode($code);
         if (null !== $template) {
             $template = new Template();
             $template->setCode($code);
+
+            $this->manager->persist($template);
         }
         $template->setSource($source);
+        $template->setDefaultParams($defaultParams);
 
-        $this->manager->persist($template);
         $this->manager->flush();
     }
 

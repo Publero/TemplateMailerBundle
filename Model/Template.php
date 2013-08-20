@@ -35,6 +35,11 @@ class Template
     private $source;
 
     /**
+     * @var array
+     */
+    private $defaultParams;
+
+    /**
      * @var string
      */
     private $checksum;
@@ -93,6 +98,22 @@ class Template
     public function setSource($source)
     {
         $this->source = $source;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultParams()
+    {
+        return $this->defaultParams;
+    }
+
+    /**
+     * @param array $defaultParams
+     */
+    public function setDefaultParams(array $defaultParams)
+    {
+        $this->defaultParams = $defaultParams;
     }
 
     /**

@@ -113,8 +113,9 @@ abstract class TemplateStorage
      *
      * @param string $code
      * @param string $source
+     * @param array $defaultParams
      */
-    public abstract function persist($code, $source);
+    public abstract function persist($code, $source, array $defaultParams = array());
 
     /**
      * Removes the template from local storage.
