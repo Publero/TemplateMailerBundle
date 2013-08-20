@@ -19,7 +19,7 @@
         "symfony/http-kernel": "~2.3",
         "symfony/twig-bridge": "~2.3",
         "symfony/yaml": "~2.3",
-        "doctrine/common": ">=2.3,<2.4",
+        "doctrine/common": "~2.3",
         "publero/net_gearman": "1.0.*@dev"
     },
     "target-dir": "Publero/TemplateMailerBundle",
