@@ -32,10 +32,14 @@ class GearmanRemoteStorageClient implements RemoteStorageClient
 
     public function upload($source, array $defaultParams = array(), $hash = null)
     {
-        return $this->client->doNormal('uploadTemplate', json_encode(array(
+        $response = $this->client->doNormal('uploadTemplate', json_encode(array(
             'source' => $source,
             'default_parameters' => $defaultParams,
             'hash' => $hash
         )));
+
+        $response = json_decode($response);
+
+        return $response['id'];
     }
 }

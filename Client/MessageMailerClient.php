@@ -16,4 +16,4 @@ use Publero\TemplateMailerBundle\Message\Message;
 interface MessageMailerClient
 {
     public function send(Message $message);
-} 
+}
