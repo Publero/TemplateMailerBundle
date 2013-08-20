@@ -18,6 +18,3 @@ Publero\TemplateMailerBundle\Model\Template:
         checksum:
             type: string
             nullable: true
-    lifecycleCallbacks:
-        prePersist: [ preUpdate ]
-        preUpdate: [ preUpdate ]
