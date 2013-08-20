@@ -49,7 +49,9 @@ class PubleroTemplateMailerExtension extends Extension
                             $objectManagerId = 'doctrine_mongodb.odm.document_manager';
                             break;
                     }
-                    $definition->replaceArgument(2, new Reference($objectManagerId));
+                    if (!empty($objectManagerId)) {
+                        $definition->replaceArgument(2, new Reference($objectManagerId));
+                    }
                     break;
                 case 'service':
                     $container->setAlias('publero_template_mailer.template.storage', $config['template_storage']['id']);

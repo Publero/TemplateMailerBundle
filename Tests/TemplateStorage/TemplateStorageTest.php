@@ -53,7 +53,6 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
     public function testDeleteRemote()
     {
         $hash = 'hash';
-        $retVal = 'retVal';
 
         $this->client
             ->expects($this->once())

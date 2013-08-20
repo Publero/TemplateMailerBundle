@@ -11,6 +11,7 @@
 
 namespace Publero\TemplateMailerBundle\Mailer;
 
+use Publero\TemplateMailerBundle\Client\TemplateMailerClient;
 use Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage;
 
 class StoredTemplateMailer extends TemplateMailer
@@ -39,7 +40,7 @@ class StoredTemplateMailer extends TemplateMailer
      */
     public function send($template, $to, array $params, $commonParams = true)
     {
-        $this->sendByHash($this->storage->getHashByCode($template), $to, $params, $commonParams);
+        $this->sendByHash($this->storage->getHash($template), $to, $params, $commonParams);
     }
 
     /**

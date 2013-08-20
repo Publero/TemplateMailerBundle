@@ -35,6 +35,9 @@ class TwigMailer implements Mailer
     public function send($template, $to, array $params)
     {
         $template = $this->twig->loadTemplate($template);
+        if (!($template instanceof \Twig_Template)) {
+            throw new \UnexpectedValueException('template is not an instance of Twig_Template');
+        }
 
         $params = $this->twig->mergeGlobals($params);
         $subject = $template->renderBlock('subject', $params);
