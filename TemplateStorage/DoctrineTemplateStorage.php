@@ -83,7 +83,16 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected function isTemplateFresh(Template $template)
     {
-        return $template->getChecksum() === sha1(
+        return $template->getChecksum() === $this->computeChecksum($template);
+    }
+
+    /**
+     * @param Template $template
+     * @return string
+     */
+    protected function computeChecksum(Template $template)
+    {
+        return sha1(
             $template->getSource() .
             json_encode($template->getDefaultParams()) .
             $template->getCode() .
@@ -98,14 +107,9 @@ class DoctrineTemplateStorage extends TemplateStorage
             if ($this->isTemplateFresh($template)) {
                 return;
             }
-            $hash = $this->persistRemote($code, $template->getSource(), $template->getDefaultParams());
+            $hash = $this->persistRemote($template->getSource(), $template->getHash(), $template->getDefaultParams());
             $template->setHash($hash);
-            $template->setChecksum(sha1(
-                $template->getSource() .
-                $code .
-                json_encode($template->getDefaultParams()) .
-                $hash
-            ));
+            $template->setChecksum($this->computeChecksum($template));
         } else {
             foreach ($this->getTemplateRepository()->findAll() as $template) {
                 if ($this->isTemplateFresh($template)) {
@@ -113,12 +117,7 @@ class DoctrineTemplateStorage extends TemplateStorage
                 }
                 $hash = $this->persistRemote($template->getSource(), $template->getSource());
                 $template->setHash($hash);
-                $template->setChecksum(sha1(
-                    $template->getSource() .
-                    $code .
-                    json_encode($template->getDefaultParams()) .
-                    $hash
-                ));
+                $template->setChecksum($this->computeChecksum($template));
             }
         }
 

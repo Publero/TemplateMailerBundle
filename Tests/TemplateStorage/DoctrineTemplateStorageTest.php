@@ -206,9 +206,72 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->storage->isFresh($code));
     }
 
-    public function testUpdate()
+    public function testUpdateOneNotFresh()
     {
-        $this->markTestIncomplete();
+        $code = 'code';
+        $hash = 'hash';
+        $source = 'source';
+        $params = array();
+
+        $template = new Template();
+        $template->setCode($code);
+        $template->setSource($source);
+        $template->setDefaultParams($params);
+        $template->setChecksum('different checksum');
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue($template))
+        ;
+        $this->client
+            ->expects($this->once())
+            ->method('upload')
+            ->with($source, $params, null)
+            ->will($this->returnValue($hash))
+        ;
+
+        $this->storage->update($code);
+
+        $this->assertEquals($hash, $template->getHash());
+        $this->assertEquals($template->getChecksum(), sha1(
+            $source .
+            json_encode($params) .
+            $code .
+            $hash
+        ));
+    }
+
+    public function testUpdateOneFresh()
+    {
+        $code = 'code';
+        $source = 'source';
+        $params = array();
+
+        $template = new Template();
+        $template->setCode($code);
+        $template->setSource($source);
+        $template->setDefaultParams($params);
+        $template->setChecksum(sha1(
+            $source .
+            json_encode($params) .
+            $code .
+            null
+        ));
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue($template))
+        ;
+        $this->client
+            ->expects($this->never())
+            ->method('upload')
+        ;
+
+        $this->storage->update($code);
     }
 
     public function testUpdateAll()
@@ -223,7 +286,6 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     public function testUpdateNotStored()
     {
         $code = 'template_code';
-        $hash = 'hash';
 
         $this->repository
             ->expects($this->once())

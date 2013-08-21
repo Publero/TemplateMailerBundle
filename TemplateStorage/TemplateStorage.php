@@ -76,18 +76,20 @@ abstract class TemplateStorage
     /**
      * Persists the template on the server and returns template hash.
      *
-     * @param string $code
      * @param string $source
+     * @param string|null $hash
      * @param array $defaultParams
+     * @return string
      */
-    public function persistRemote($code, $source, array $defaultParams = array())
+    public function persistRemote($source, $hash = null, array $defaultParams = array())
     {
         $hash = $this->remoteClient->upload(
             $source,
             $defaultParams,
-            $this->isStored($code) ? $this->getHash($code) : null
+            $hash
         );
-        $this->assignHash($code, $hash);
+
+        return $hash;
     }
 
     /**

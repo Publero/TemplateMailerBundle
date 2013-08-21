@@ -38,24 +38,9 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testPersistRemote()
     {
-        $code = 'code';
         $source = 'source';
         $hash = 'hash';
         $newHash = 'new_hash';
-
-        $this->storage
-            ->expects($this->once())
-            ->method('isStored')
-            ->with($code)
-            ->will($this->returnValue(true))
-        ;
-
-        $this->storage
-            ->expects($this->once())
-            ->method('getHash')
-            ->with($code)
-            ->will($this->returnValue($hash))
-        ;
 
         $this->client
             ->expects($this->once())
@@ -64,13 +49,7 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($newHash))
         ;
 
-        $this->storage
-            ->expects($this->once())
-            ->method('assignHash')
-            ->with($code, $newHash)
-        ;
-
-        $this->storage->persistRemote($code, $source);
+        $this->assertEquals($newHash, $this->storage->persistRemote($source, $hash));
     }
 
     public function testDeleteRemote()
