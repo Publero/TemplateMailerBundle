@@ -83,14 +83,14 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected function isTemplateFresh(Template $template)
     {
-        return $template->getChecksum() === $this->computeChecksum($template);
+        return null !== $template->getHash() && $template->getChecksum() === $this->computeChecksum($template);
     }
 
     /**
      * @param Template $template
      * @return string
      */
-    protected function computeChecksum(Template $template)
+    public function computeChecksum(Template $template)
     {
         return sha1(
             $template->getSource() .
@@ -111,11 +111,12 @@ class DoctrineTemplateStorage extends TemplateStorage
             $template->setHash($hash);
             $template->setChecksum($this->computeChecksum($template));
         } else {
+            /* @var Template $template */
             foreach ($this->getTemplateRepository()->findAll() as $template) {
                 if ($this->isTemplateFresh($template)) {
                     continue;
                 }
-                $hash = $this->persistRemote($template->getSource(), $template->getSource());
+                $hash = $this->persistRemote($template->getSource(), $template->getHash(), $template->getDefaultParams());
                 $template->setHash($hash);
                 $template->setChecksum($this->computeChecksum($template));
             }

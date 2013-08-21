@@ -134,7 +134,6 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     public function testIsStoredTrue()
     {
         $code = 'code';
-        $source = 'source';
         $template = new Template();
 
         $this->repository
@@ -169,12 +168,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setSource('source');
         $template->setHash('hash');
         $template->setDefaultParams(array());
-        $template->setChecksum(sha1(
-            $template->getSource() .
-            json_encode($template->getDefaultParams()) .
-            $template->getCode() .
-            $template->getHash()
-        ));
+        $template->setChecksum($this->storage->computeChecksum($template));
 
         $this->repository
             ->expects($this->once())
@@ -195,6 +189,25 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setHash('hash');
         $template->setDefaultParams(array());
         $template->setChecksum('different checksum');
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue($template))
+        ;
+
+        $this->assertFalse($this->storage->isFresh($code));
+    }
+
+    public function testIsFreshNoHash()
+    {
+        $code = 'code';
+        $template = new Template();
+        $template->setCode($code);
+        $template->setSource('source');
+        $template->setDefaultParams(array());
+        $template->setChecksum($this->storage->computeChecksum($template));
 
         $this->repository
             ->expects($this->once())
@@ -235,30 +248,22 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->storage->update($code);
 
         $this->assertEquals($hash, $template->getHash());
-        $this->assertEquals($template->getChecksum(), sha1(
-            $source .
-            json_encode($params) .
-            $code .
-            $hash
-        ));
+        $this->assertEquals($template->getChecksum(), $this->storage->computeChecksum($template));
     }
 
     public function testUpdateOneFresh()
     {
         $code = 'code';
+        $hash = 'hash';
         $source = 'source';
         $params = array();
 
         $template = new Template();
         $template->setCode($code);
+        $template->setHash($hash);
         $template->setSource($source);
         $template->setDefaultParams($params);
-        $template->setChecksum(sha1(
-            $source .
-            json_encode($params) .
-            $code .
-            null
-        ));
+        $template->setChecksum($this->storage->computeChecksum($template));
 
         $this->repository
             ->expects($this->once())
@@ -276,7 +281,37 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateAll()
     {
-        $this->markTestIncomplete();
+        $params = array();
+        $hash = 'hash';
+
+        $template1 = new Template();
+        $template1->setCode('code1');
+        $template1->setSource('source1');
+        $template1->setHash('hash1');
+        $template1->setDefaultParams($params);
+        $template1->setChecksum($this->storage->computeChecksum($template1));
+
+        $template2 = new Template();
+        $template2->setCode('code2');
+        $template2->setSource('source2');
+        $template2->setDefaultParams($params);
+        $template2->setChecksum('different checksum');
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findAll')
+            ->will($this->returnValue(array($template1, $template2)))
+        ;
+        $this->client
+            ->expects($this->once())
+            ->method('upload')
+            ->with('source2', $params, null)
+            ->will($this->returnValue($hash))
+        ;
+
+        $this->storage->update();
+
+        $this->assertEquals($hash, $template2->getHash());
     }
 
     /**
