@@ -23,9 +23,9 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected $manager;
 
-    public function __construct(RemoteStorageClient $remoteClient, ObjectManager $manager)
+    public function __construct(RemoteStorageClient $remoteClient, TemplateProcessor $templateProcessor = null, ObjectManager $manager)
     {
-        parent::__construct($remoteClient);
+        parent::__construct($remoteClient, $templateProcessor);
 
         $this->manager = $manager;
     }
@@ -115,38 +115,43 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function update($code = null)
     {
         if (null !== $code) {
-            $template = $this->getTemplateByCode($code);
-            if ($this->isTemplateFresh($template)) {
-                return;
-            }
-            $hash = $this->persistRemote(
-                $template->getSender(),
-                $template->getSubject(),
-                $template->getBody(),
-                $template->getDefaultParams(),
-                $template->getHash()
-            );
-            $template->setHash($hash);
-            $template->setChecksum($this->computeChecksum($template));
+            $this->updateTemplate($this->getTemplateByCode($code));
         } else {
-            /* @var Template $template */
             foreach ($this->getTemplateRepository()->findAll() as $template) {
-                if ($this->isTemplateFresh($template)) {
-                    continue;
-                }
-                $hash = $this->persistRemote(
-                    $template->getSender(),
-                    $template->getSubject(),
-                    $template->getBody(),
-                    $template->getDefaultParams(),
-                    $template->getHash()
-                );
-                $template->setHash($hash);
-                $template->setChecksum($this->computeChecksum($template));
+                $this->updateTemplate($template);
             }
         }
 
         $this->manager->flush();
+    }
+
+    protected function updateTemplate(Template $template)
+    {
+        if ($this->isTemplateFresh($template)) {
+            return;
+        }
+
+        $hasProcessor = null !== $this->templateProcessor;
+        $params = $template->getDefaultParams();
+        $code = $template->getCode();
+
+        $sender = $hasProcessor ?
+            $this->templateProcessor->processTemplate($code . ':sender', $params) :
+            $template->getSender()
+        ;
+        $subject = $hasProcessor ?
+            $this->templateProcessor->processTemplate($code . ':subject', $params) :
+            $template->getSubject()
+        ;
+        $body = $hasProcessor ?
+            $this->templateProcessor->processTemplate($code . ':body', $params) :
+            $template->getBody()
+        ;
+
+        $hash = $this->persistRemote($sender, $subject, $body, $template->getDefaultParams(), $template->getHash());
+
+        $template->setHash($hash);
+        $template->setChecksum($this->computeChecksum($template));
     }
 
     public function assignHash($code, $hash)

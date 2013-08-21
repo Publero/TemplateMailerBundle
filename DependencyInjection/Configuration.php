@@ -55,6 +55,7 @@ class Configuration implements ConfigurationInterface
                 ->enumNode('type')->values(array(null, 'doctrine', 'service'))->defaultNull()->end()
                 ->enumNode('backend')->values(array('orm', 'mongodb'))->defaultValue('orm')->end()
                 ->scalarNode('id')->defaultNull()->end()
+                ->scalarNode('template_processor')->defaultNull()->end()
             ->end()
             ->validate()
                 ->ifTrue(function($v) {

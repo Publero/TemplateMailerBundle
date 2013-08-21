@@ -55,7 +55,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->client = $this->getMock('Publero\TemplateMailerBundle\Client\RemoteStorageClient', array('upload', 'remove'));
 
-        $this->storage = new DoctrineTemplateStorage($this->client, $this->manager);
+        $this->storage = new DoctrineTemplateStorage($this->client, null, $this->manager);
     }
 
     public function testGetHash()

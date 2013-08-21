@@ -2,6 +2,9 @@ parameters:
     publero_template_mailer.mailer.stored_template.class: Publero\TemplateMailerBundle\Mailer\StoredTemplateMailer
     publero_template_mailer.template.storage.abstract.class: Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage
     publero_template_mailer.template.storage.doctrine.class: Publero\TemplateMailerBundle\TemplateStorage\DoctrineTemplateStorage
+    publero_template_mailer.template.processor.twig.class: Publero\TemplateMailerBundle\TemplateProcessor\TwigTemplateProcessor
+    publero_template_mailer.twig.class: Twig_Environment
+    publero_template_mailer.twig.loader.class: Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage\TwigTemplateLoader
 
 services:
     publero_template_mailer.mailer.stored_template:
@@ -10,7 +13,7 @@ services:
 
     publero_template_mailer.template.storage.abstract:
         class: %publero_template_mailer.template.storage.abstract.class%
-        arguments: [ @publero_template_mailer.client.remote_storage ]
+        arguments: [ @publero_template_mailer.client.remote_storage, ~ ] # 2nd argument might be replaced with template processor based on the configuration
         abstract: true
 
     publero_template_mailer.template.storage.doctrine:
@@ -20,3 +23,20 @@ services:
 
     publero_template_mailer.template.storage:
         alias: publero_template_mailer.template.storage.doctrine
+
+    publero_template_mailer.template.processor.twig:
+        class: %publero_template_mailer.template.processor.twig.class%
+        arguments: [ @publero_template_mailer.twig ]
+
+    publero_template_mailer.twig:
+        class: %publero_template_mailer.twig.class%
+        parent: twig
+        calls:
+            - [ setLoader, [ @publero_template_mailer.twig.loader ] ]
+        public: false
+
+    publero_template_mailer.twig.loader:
+        class: %publero_template_mailer.twig.loader.class%
+        calls:
+            - [ setTemplateStorage, [ @publero_template_mailer.template.storage ] ]
+        public: false

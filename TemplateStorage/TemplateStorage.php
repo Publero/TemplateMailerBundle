@@ -12,6 +12,7 @@
 namespace Publero\TemplateMailerBundle\TemplateStorage;
 
 use Publero\TemplateMailerBundle\Client\RemoteStorageClient;
+use Publero\TemplateMailerBundle\TemplateProcessor\TemplateProcessor;
 
 abstract class TemplateStorage
 {
@@ -20,9 +21,15 @@ abstract class TemplateStorage
      */
     private $remoteClient;
 
-    public function __construct(RemoteStorageClient $remoteClient)
+    /**
+     * @var TemplateProcessor
+     */
+    protected $templateProcessor;
+
+    public function __construct(RemoteStorageClient $remoteClient, TemplateProcessor $templateProcessor = null)
     {
         $this->remoteClient = $remoteClient;
+        $this->templateProcessor = $templateProcessor;
     }
 
     /**
@@ -105,15 +112,7 @@ abstract class TemplateStorage
      */
     public function persistRemote($sender, $subject, $body, array $defaultParams = array(), $hash = null)
     {
-        $hash = $this->remoteClient->upload(
-            $sender,
-            $subject,
-            $body,
-            $defaultParams,
-            $hash
-        );
-
-        return $hash;
+        return $this->remoteClient->upload($sender, $subject, $body, $defaultParams, $hash);
     }
 
     /**

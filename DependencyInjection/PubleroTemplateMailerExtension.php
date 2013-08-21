@@ -33,7 +33,6 @@ class PubleroTemplateMailerExtension extends Extension
         $definition = $container->getDefinition('publero_template_mailer.gearman_client');
         $definition->addMethodCall('addServers', array($config['gearman_servers']));
 
-        // 'plain_mailer', 'template_mailer', 'remote_storage'
         if ('gearman' === $config['client']['plain_mailer']['type']) {
             $definition = $container->getDefinition('publero_template_mailer.client.message.gearman');
             $definition->replaceArgument(1, $config['client']['plain_mailer']['function_name']);
@@ -71,7 +70,11 @@ class PubleroTemplateMailerExtension extends Extension
                 case 'service':
                     $container->setAlias('publero_template_mailer.template.storage', $config['template_storage']['id']);
                     break;
+            }
 
+            if (!empty($config['template_storage']['template_processor'])) {
+                $definition = $container->getDefinition('publero_template_mailer.template.storage.abstract');
+                $definition->replaceArgument(1, $config['template_storage']['template_processor']);
             }
         }
     }
