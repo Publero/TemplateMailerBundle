@@ -11,7 +11,11 @@ Publero\TemplateMailerBundle\Model\Template:
             type: string
             unique:
                 order: desc
-        source:
+        sender:
+            type: string
+        subject:
+            type: string
+        body:
             type: string
         defaultParams:
             type: hash

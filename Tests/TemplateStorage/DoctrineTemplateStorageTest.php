@@ -46,10 +46,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
             array('find', 'findBy', 'findOneBy', 'findAll', 'getClassName', 'findOneByCode')
         );
 
-        $this->manager = $this->getMock(
-            'Doctrine\Common\Persistence\ObjectManager'//,
-            //array('persist', 'remove', 'flush', 'find', 'clear', 'detach', 'refresh', 'getRepository', 'getClassMetadata', 'getMetadataFactory', 'merge', 'contains', 'initializeObject')
-        );
+        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager
             ->expects($this->any())
             ->method('getRepository')
@@ -96,12 +93,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->storage->getHash($code);
     }
 
-    public function testGetSource()
+    public function testGetSender()
     {
         $code = 'code';
         $source = 'source';
         $template = new Template();
-        $template->setSource($source);
+        $template->setSender($source);
 
         $this->repository
             ->expects($this->once())
@@ -110,7 +107,41 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($template))
         ;
 
-        $this->assertEquals($source, $this->storage->getSource($code));
+        $this->assertEquals($source, $this->storage->getSender($code));
+    }
+
+    public function testGetSubject()
+    {
+        $code = 'code';
+        $source = 'source';
+        $template = new Template();
+        $template->setSubject($source);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue($template))
+        ;
+
+        $this->assertEquals($source, $this->storage->getSubject($code));
+    }
+
+    public function testGetBody()
+    {
+        $code = 'code';
+        $source = 'source';
+        $template = new Template();
+        $template->setBody($source);
+
+        $this->repository
+            ->expects($this->once())
+            ->method('findOneByCode')
+            ->with($code)
+            ->will($this->returnValue($template))
+        ;
+
+        $this->assertEquals($source, $this->storage->getBody($code));
     }
 
     /**
@@ -128,7 +159,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null))
         ;
 
-        $this->storage->getSource($code);
+        $this->storage->getBody($code);
     }
 
     public function testIsStoredTrue()
@@ -165,7 +196,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $code = 'code';
         $template = new Template();
         $template->setCode($code);
-        $template->setSource('source');
+        $template->setBody('body');
         $template->setHash('hash');
         $template->setDefaultParams(array());
         $template->setChecksum($this->storage->computeChecksum($template));
@@ -185,7 +216,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $code = 'code';
         $template = new Template();
         $template->setCode($code);
-        $template->setSource('source');
+        $template->setBody('body');
         $template->setHash('hash');
         $template->setDefaultParams(array());
         $template->setChecksum('different checksum');
@@ -205,7 +236,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $code = 'code';
         $template = new Template();
         $template->setCode($code);
-        $template->setSource('source');
+        $template->setBody('body');
         $template->setDefaultParams(array());
         $template->setChecksum($this->storage->computeChecksum($template));
 
@@ -223,12 +254,16 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     {
         $code = 'code';
         $hash = 'hash';
-        $source = 'source';
+        $sender = 'sender';
+        $subject = 'subject';
+        $body = 'body';
         $params = array();
 
         $template = new Template();
         $template->setCode($code);
-        $template->setSource($source);
+        $template->setSender($sender);
+        $template->setSubject($subject);
+        $template->setBody($body);
         $template->setDefaultParams($params);
         $template->setChecksum('different checksum');
 
@@ -241,7 +276,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method('upload')
-            ->with($source, $params, null)
+            ->with($sender, $subject, $body, $params, null)
             ->will($this->returnValue($hash))
         ;
 
@@ -255,13 +290,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     {
         $code = 'code';
         $hash = 'hash';
-        $source = 'source';
         $params = array();
 
         $template = new Template();
         $template->setCode($code);
         $template->setHash($hash);
-        $template->setSource($source);
+        $template->setBody('body');
         $template->setDefaultParams($params);
         $template->setChecksum($this->storage->computeChecksum($template));
 
@@ -286,14 +320,18 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $template1 = new Template();
         $template1->setCode('code1');
-        $template1->setSource('source1');
+        $template1->setSender('subject1');
+        $template1->setSubject('body1');
+        $template1->setBody('body1');
         $template1->setHash('hash1');
         $template1->setDefaultParams($params);
         $template1->setChecksum($this->storage->computeChecksum($template1));
 
         $template2 = new Template();
         $template2->setCode('code2');
-        $template2->setSource('source2');
+        $template2->setSender('sender2');
+        $template2->setSubject('subject2');
+        $template2->setBody('body2');
         $template2->setDefaultParams($params);
         $template2->setChecksum('different checksum');
 
@@ -305,7 +343,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method('upload')
-            ->with('source2', $params, null)
+            ->with('sender2', 'subject2', 'body2', $params, null)
             ->will($this->returnValue($hash))
         ;
 
@@ -372,7 +410,9 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     public function testPersistUpdateStored()
     {
         $code = 'code';
-        $source = 'source';
+        $sender = 'sender';
+        $subject = 'subject';
+        $body = 'body';
         $template = new Template();
 
         $this->repository
@@ -391,15 +431,19 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
             ->method('flush')
         ;
 
-        $this->storage->persist($code, $source);
+        $this->storage->persist($code, $sender, $subject, $body);
 
-        $this->assertEquals($source, $template->getSource());
+        $this->assertEquals($sender, $template->getSender());
+        $this->assertEquals($subject, $template->getSubject());
+        $this->assertEquals($body, $template->getBody());
     }
 
     public function testPersistCreateNew()
     {
         $code = 'code';
-        $source = 'source';
+        $sender = 'sender';
+        $subject = 'subject';
+        $body = 'body';
 
         $this->repository
             ->expects($this->once())
@@ -417,7 +461,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
             ->method('flush')
         ;
 
-        $this->storage->persist($code, $source);
+        $this->storage->persist($code, $sender, $subject, $body);
     }
 
     public function testDelete()

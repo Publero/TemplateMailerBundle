@@ -13,7 +13,11 @@ Publero\TemplateMailerBundle\Model\Template:
             type: string
             unique: true
             nullable: true
-        source:
+        sender:
+            type: text
+        subject:
+            type: text
+        body:
             type: text
         defaultParams:
             type: json_array

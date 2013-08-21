@@ -40,15 +40,15 @@ class GearmanRemoteStorageClient implements RemoteStorageClient
         $this->client = $client;
         $this->uploadFunctionName = $uploadFunctionName;
         $this->removeFunctionName = $removeFunctionName;
-
-        var_dump($uploadFunctionName, $removeFunctionName); die;
     }
 
-    public function upload($source, array $defaultParams = array(), $hash = null)
+    public function upload($senderSource, $subjectSource, $bodySource, array $defaultParams = array(), $hash = null)
     {
         $response = $this->client->doNormal($this->uploadFunctionName, json_encode(array(
-            'source' => $source,
-            'default_parameters' => $defaultParams,
+            'sender' => $senderSource,
+            'subject' => $subjectSource,
+            'template' => $bodySource,
+            'parameters' => $defaultParams,
             'hash' => $hash
         )));
 

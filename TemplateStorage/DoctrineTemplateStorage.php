@@ -62,9 +62,19 @@ class DoctrineTemplateStorage extends TemplateStorage
         return $this->getTemplateByCode($code)->getHash();
     }
 
-    public function getSource($code)
+    public function getSender($code)
     {
-        return $this->getTemplateByCode($code)->getSource();
+        return $this->getTemplateByCode($code)->getSender();
+    }
+
+    public function getSubject($code)
+    {
+        return $this->getTemplateByCode($code)->getSubject();
+    }
+
+    public function getBody($code)
+    {
+        return $this->getTemplateByCode($code)->getBody();
     }
 
     public function isStored($code)
@@ -93,7 +103,9 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function computeChecksum(Template $template)
     {
         return sha1(
-            $template->getSource() .
+            $template->getSender() .
+            $template->getSubject() .
+            $template->getBody() .
             json_encode($template->getDefaultParams()) .
             $template->getCode() .
             $template->getHash()
@@ -107,7 +119,13 @@ class DoctrineTemplateStorage extends TemplateStorage
             if ($this->isTemplateFresh($template)) {
                 return;
             }
-            $hash = $this->persistRemote($template->getSource(), $template->getHash(), $template->getDefaultParams());
+            $hash = $this->persistRemote(
+                $template->getSender(),
+                $template->getSubject(),
+                $template->getBody(),
+                $template->getDefaultParams(),
+                $template->getHash()
+            );
             $template->setHash($hash);
             $template->setChecksum($this->computeChecksum($template));
         } else {
@@ -116,7 +134,13 @@ class DoctrineTemplateStorage extends TemplateStorage
                 if ($this->isTemplateFresh($template)) {
                     continue;
                 }
-                $hash = $this->persistRemote($template->getSource(), $template->getHash(), $template->getDefaultParams());
+                $hash = $this->persistRemote(
+                    $template->getSender(),
+                    $template->getSubject(),
+                    $template->getBody(),
+                    $template->getDefaultParams(),
+                    $template->getHash()
+                );
                 $template->setHash($hash);
                 $template->setChecksum($this->computeChecksum($template));
             }
@@ -131,7 +155,7 @@ class DoctrineTemplateStorage extends TemplateStorage
         $this->manager->flush();
     }
 
-    public function persist($code, $source, array $defaultParams = array())
+    public function persist($code, $sender, $subject, $body, array $defaultParams = array())
     {
         $template = $this->getTemplateRepository()->findOneByCode($code);
         if (null === $template) {
@@ -140,7 +164,9 @@ class DoctrineTemplateStorage extends TemplateStorage
 
             $this->manager->persist($template);
         }
-        $template->setSource($source);
+        $template->setSender($sender);
+        $template->setSubject($subject);
+        $template->setBody($body);
         $template->setDefaultParams($defaultParams);
 
         $this->manager->flush();

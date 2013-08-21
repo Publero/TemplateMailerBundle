@@ -23,10 +23,12 @@ interface RemoteStorageClient
     /**
      * Uploads template to the remote server and returns hash of the template.
      *
-     * @param string $source
+     * @param string $senderSource
+     * @param string $subjectSource
+     * @param string $bodySource
      * @param array $defaultParams
      * @param string $hash
      * @return string
      */
-    public function upload($source, array $defaultParams = array(), $hash = null);
+    public function upload($senderSource, $subjectSource, $bodySource, array $defaultParams = array(), $hash = null);
 }

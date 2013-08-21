@@ -36,14 +36,34 @@ abstract class TemplateStorage
     public abstract function getHash($code);
 
     /**
-     * Returns hash of template specified by the code.
+     * Returns sender of template specified by the code.
      *
      * @param string $code
      * @return string
      *
      * @throws \OutOfBoundsException If no template with specified code is stored
      */
-    public abstract function getSource($code);
+    public abstract function getSender($code);
+
+    /**
+     * Returns subject of template specified by the code.
+     *
+     * @param string $code
+     * @return string
+     *
+     * @throws \OutOfBoundsException If no template with specified code is stored
+     */
+    public abstract function getSubject($code);
+
+    /**
+     * Returns body of template specified by the code.
+     *
+     * @param string $code
+     * @return string
+     *
+     * @throws \OutOfBoundsException If no template with specified code is stored
+     */
+    public abstract function getBody($code);
 
     /**
      * Returns whether the template specified by the code is stored in this storage.
@@ -76,15 +96,19 @@ abstract class TemplateStorage
     /**
      * Persists the template on the server and returns template hash.
      *
-     * @param string $source
-     * @param string|null $hash
+     * @param string $sender
+     * @param string $subject
+     * @param string $body
      * @param array $defaultParams
+     * @param string|null $hash
      * @return string
      */
-    public function persistRemote($source, $hash = null, array $defaultParams = array())
+    public function persistRemote($sender, $subject, $body, array $defaultParams = array(), $hash = null)
     {
         $hash = $this->remoteClient->upload(
-            $source,
+            $sender,
+            $subject,
+            $body,
             $defaultParams,
             $hash
         );
@@ -114,10 +138,12 @@ abstract class TemplateStorage
      * Persists the template into local storage.
      *
      * @param string $code
-     * @param string $source
+     * @param string $sender
+     * @param string $subject
+     * @param string $body
      * @param array $defaultParams
      */
-    public abstract function persist($code, $source, array $defaultParams = array());
+    public abstract function persist($code, $sender, $subject, $body, array $defaultParams = array());
 
     /**
      * Removes the template from local storage.

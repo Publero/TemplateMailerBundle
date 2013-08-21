@@ -31,25 +31,28 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->client = $this->getMock('Publero\TemplateMailerBundle\Client\RemoteStorageClient', array('upload', 'remove'));
         $this->storage = $this->getMock(
             'Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage',
-            array('getHash', 'getSource', 'isStored', 'isFresh', 'update', 'assignHash', 'persist', 'delete'),
+            array('getHash', 'getSender', 'getSubject', 'getBody', 'isStored', 'isFresh', 'update', 'assignHash', 'persist', 'delete'),
             array($this->client)
         );
     }
 
     public function testPersistRemote()
     {
-        $source = 'source';
+        $sender = 'sender';
+        $subject = 'subject';
+        $body = 'body';
+        $params = array();
         $hash = 'hash';
         $newHash = 'new_hash';
 
         $this->client
             ->expects($this->once())
             ->method('upload')
-            ->with($source, array(), $hash)
+            ->with($sender, $subject, $body, $params, $hash)
             ->will($this->returnValue($newHash))
         ;
 
-        $this->assertEquals($newHash, $this->storage->persistRemote($source, $hash));
+        $this->assertEquals($newHash, $this->storage->persistRemote($sender, $subject, $body, $params, $hash));
     }
 
     public function testDeleteRemote()

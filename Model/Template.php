@@ -32,7 +32,17 @@ class Template
     /**
      * @var string
      */
-    private $source;
+    private $sender;
+
+    /**
+     * @var string
+     */
+    private $subject;
+
+    /**
+     * @var string
+     */
+    private $body;
 
     /**
      * @var array
@@ -93,18 +103,56 @@ class Template
     /**
      * @return string
      */
-    public function getSource()
+    public function getSender()
     {
-        return $this->source;
+        return $this->sender;
     }
 
     /**
-     * @param string $source
+     * @param string $sender
      * @return self
      */
-    public function setSource($source)
+    public function setSender($sender)
     {
-        $this->source = $source;
+        $this->sender = $sender;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     * @return self
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param string $body
+     * @return self
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
 
         return $this;
     }
