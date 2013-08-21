@@ -13,15 +13,15 @@ services:
 
     publero_template_mailer.client.message.gearman:
         class: %publero_template_mailer.client.message.gearman.class%
-        arguments: [ @publero_template_mailer.gearman_client ]
+        arguments: [ @publero_template_mailer.gearman_client, ~ ]
 
     publero_template_mailer.client.remote_storage.gearman:
         class: %publero_template_mailer.client.remote_storage.gearman.class%
-        arguments: [ @publero_template_mailer.gearman_client ]
+        arguments: [ @publero_template_mailer.gearman_client, ~, ~ ]
 
     publero_template_mailer.client.template.gearman:
         class: %publero_template_mailer.client.template.gearman.class%
-        arguments: [ @publero_template_mailer.gearman_client ]
+        arguments: [ @publero_template_mailer.gearman_client, ~ ]
 
     publero_template_mailer.client.message:
         alias: publero_template_mailer.client.message.gearman

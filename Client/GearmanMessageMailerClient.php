@@ -21,18 +21,28 @@ class GearmanMessageMailerClient implements MessageMailerClient
      */
     private $client;
 
-    public function __construct(Client $client)
+    /**
+     * @var string
+     */
+    private $functionName;
+
+    /**
+     * @param Client $client
+     * @param string $functionName
+     */
+    public function __construct(Client $client, $functionName)
     {
         $this->client = $client;
+        $this->functionName = $functionName;
     }
 
     public function send(Message $message)
     {
-        $this->client->doBackground('sendMail', json_encode(array(
+        $this->client->doBackground($this->functionName, json_encode(array(
             'subject' => $message->getSubject(),
             'html_body' => $message->getHtmlBody(),
             'text_body' => $message->getTextBody(),
-            'to' => $message->getTo(),
+            'recipients' => $message->getTo(),
             'sender' => $message->getSender()
         )));
     }

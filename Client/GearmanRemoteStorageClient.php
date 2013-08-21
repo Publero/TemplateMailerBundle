@@ -20,19 +20,33 @@ class GearmanRemoteStorageClient implements RemoteStorageClient
      */
     private $client;
 
-    public function __construct(Client $client)
+    /**
+     * @var string
+     */
+    private $uploadFunctionName;
+
+    /**
+     * @var string
+     */
+    private $removeFunctionName;
+
+    /**
+     * @param Client $client
+     * @param string $uploadFunctionName
+     * @param string $removeFunctionName
+     */
+    public function __construct(Client $client, $uploadFunctionName, $removeFunctionName)
     {
         $this->client = $client;
-    }
+        $this->uploadFunctionName = $uploadFunctionName;
+        $this->removeFunctionName = $removeFunctionName;
 
-    public function remove($hash)
-    {
-        $this->client->doBackground('removeTemplate', json_encode(array('hash' => $hash)));
+        var_dump($uploadFunctionName, $removeFunctionName); die;
     }
 
     public function upload($source, array $defaultParams = array(), $hash = null)
     {
-        $response = $this->client->doNormal('uploadTemplate', json_encode(array(
+        $response = $this->client->doNormal($this->uploadFunctionName, json_encode(array(
             'source' => $source,
             'default_parameters' => $defaultParams,
             'hash' => $hash
@@ -41,5 +55,10 @@ class GearmanRemoteStorageClient implements RemoteStorageClient
         $response = json_decode($response);
 
         return $response['id'];
+    }
+
+    public function remove($hash)
+    {
+        $this->client->doBackground($this->removeFunctionName, json_encode(array('hash' => $hash)));
     }
 }

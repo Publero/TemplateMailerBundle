@@ -30,8 +30,23 @@ class PubleroTemplateMailerExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $gearmanClientDefinition = $container->getDefinition('publero_template_mailer.gearman_client');
-        $gearmanClientDefinition->addMethodCall('addServers', array($config['gearman_servers']));
+        $definition = $container->getDefinition('publero_template_mailer.gearman_client');
+        $definition->addMethodCall('addServers', array($config['gearman_servers']));
+
+        // 'plain_mailer', 'template_mailer', 'remote_storage'
+        if ('gearman' === $config['client']['plain_mailer']['type']) {
+            $definition = $container->getDefinition('publero_template_mailer.client.message.gearman');
+            $definition->replaceArgument(1, $config['client']['plain_mailer']['function_name']);
+        }
+        if ('gearman' === $config['client']['template_mailer']['type']) {
+            $definition = $container->getDefinition('publero_template_mailer.client.template.gearman');
+            $definition->replaceArgument(1, $config['client']['template_mailer']['function_name']);
+        }
+        if ('gearman' === $config['client']['remote_storage']['type']) {
+            $definition = $container->getDefinition('publero_template_mailer.client.remote_storage.gearman');
+            $definition->replaceArgument(1, $config['client']['remote_storage']['upload_function_name']);
+            $definition->replaceArgument(2, $config['client']['remote_storage']['remove_function_name']);
+        }
 
         if (null !== $config['template_storage']['type']) {
             $loader->load('template_storage.yml');
