@@ -15,6 +15,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Publero\TemplateMailerBundle\Client\RemoteStorageClient;
 use Publero\TemplateMailerBundle\Model\Template;
+use Publero\TemplateMailerBundle\TemplateProcessor\TemplateProcessor;
 
 class DoctrineTemplateStorage extends TemplateStorage
 {
@@ -23,7 +24,7 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected $manager;
 
-    public function __construct(RemoteStorageClient $remoteClient, TemplateProcessor $templateProcessor = null, ObjectManager $manager)
+    public function __construct(RemoteStorageClient $remoteClient, ObjectManager $manager, TemplateProcessor $templateProcessor = null)
     {
         parent::__construct($remoteClient, $templateProcessor);
 

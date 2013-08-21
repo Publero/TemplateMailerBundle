@@ -11,7 +11,7 @@
 
 namespace Publero\TemplateMailerBundle\TemplateProcessor;
 
-class TwigTemplateProcessor
+class TwigTemplateProcessor implements TemplateProcessor
 {
     /**
      * @var \Twig_Environment
