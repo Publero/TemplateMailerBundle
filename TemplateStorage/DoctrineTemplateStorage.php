@@ -13,6 +13,10 @@ namespace Publero\TemplateMailerBundle\TemplateStorage;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Publero\TemplateMailerBundle\Client\RemoteStorageClient;
 use Publero\TemplateMailerBundle\Model\Template;
 use Publero\TemplateMailerBundle\TemplateProcessor\TemplateProcessor;
@@ -81,6 +85,42 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function isStored($code)
     {
         return null !== $this->getTemplateRepository()->findOneByCode($code);
+    }
+
+    public function getTemplates()
+    {
+        if (class_exists('Doctrine\ORM\EntityManager') && $this->manager instanceof EntityManager) {
+            /* @var EntityRepository $repo */
+            $repo = $this->getTemplateRepository();
+            $qb = $repo->createQueryBuilder('t');
+            $qb->select('t.code');
+
+            return array_map(
+                function(array $item) {
+                    return $item['code'];
+                },
+                $qb->getQuery()->getScalarResult()
+            );
+        } else if (class_exists('Doctrine\ODM\MongoDB\DocumentManager') && $this->manager instanceof DocumentManager) {
+            /* @var DocumentRepository $repo */
+            $repo = $this->getTemplateRepository();
+            $qb = $repo->createQueryBuilder();
+            $qb->select('code');
+
+            return array_map(
+                function(array $item) {
+                    return $item['code'];
+                },
+                $qb->getQuery()->execute()
+            );
+        } else {
+            return array_map(
+                function(Template $template) {
+                    return $template->getCode();
+                },
+                $this->getTemplateRepository()->findAll()
+            );
+        }
     }
 
     public function isFresh($code)

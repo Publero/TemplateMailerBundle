@@ -81,6 +81,13 @@ abstract class TemplateStorage
     public abstract function isStored($code);
 
     /**
+     * Returns codes of all stored templates.
+     *
+     * @return string[]
+     */
+    public abstract function getTemplates();
+
+    /**
      * Returns whether the local copy of template is fresh.
      *
      * @param string $code
