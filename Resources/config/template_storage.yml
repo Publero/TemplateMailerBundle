@@ -19,7 +19,7 @@ services:
     publero_template_mailer.template.storage.doctrine:
         class: %publero_template_mailer.template.storage.doctrine.class%
         parent: publero_template_mailer.template.storage.abstract
-        arguments: [ ~, ~ ] # this argument will be replaced with object manager based on the configuration
+        arguments: [ ~ ] # this argument will be replaced with object manager based on the configuration
 
     publero_template_mailer.template.storage:
         alias: publero_template_mailer.template.storage.doctrine
@@ -37,6 +37,5 @@ services:
 
     publero_template_mailer.twig.loader:
         class: %publero_template_mailer.twig.loader.class%
-        calls:
-            - [ setTemplateStorage, [ @publero_template_mailer.template.storage ] ]
+        arguments: [ @publero_template_mailer.template.storage ]
         public: false

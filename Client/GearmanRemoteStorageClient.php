@@ -52,7 +52,7 @@ class GearmanRemoteStorageClient implements RemoteStorageClient
             'hash' => $hash
         )));
 
-        $response = json_decode($response);
+        $response = json_decode($response, true);
 
         return $response['id'];
     }

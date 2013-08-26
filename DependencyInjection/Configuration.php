@@ -112,7 +112,7 @@ class Configuration implements ConfigurationInterface
                 ->enumNode('type')->values(array('gearman', 'service'))->defaultValue('gearman')->end()
                 ->append($this->addGearmanServersNode())
                 ->scalarNode('function_name')
-                    ->defaultValue('publero_template_mailer.send.' - $mailerName)
+                    ->defaultValue('publero_template_mailer.send.' . $mailerName)
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('id')->defaultNull()->end()

@@ -13,6 +13,7 @@ namespace Publero\TemplateMailerBundle\TemplateStorage;
 
 use Publero\TemplateMailerBundle\Client\RemoteStorageClient;
 use Publero\TemplateMailerBundle\TemplateProcessor\TemplateProcessor;
+use Publero\TemplateMailerBundle\TemplateProcessor\TemplateStorageAwareTemplateProcessor;
 
 abstract class TemplateStorage
 {
@@ -26,10 +27,22 @@ abstract class TemplateStorage
      */
     protected $templateProcessor;
 
-    public function __construct(RemoteStorageClient $remoteClient, TemplateProcessor $templateProcessor = null)
+    public function __construct(RemoteStorageClient $remoteClient)
     {
         $this->remoteClient = $remoteClient;
+    }
+
+    /**
+     * Sets a template processor.
+     *
+     * @param TemplateProcessor $templateProcessor
+     */
+    public function setTemplateProcessor(TemplateProcessor $templateProcessor = null)
+    {
         $this->templateProcessor = $templateProcessor;
+        if ($templateProcessor instanceof TemplateStorageAwareTemplateProcessor) {
+            $templateProcessor->setTemplateStorage($this);
+        }
     }
 
     /**
@@ -41,6 +54,16 @@ abstract class TemplateStorage
      * @throws \OutOfBoundsException If no template with specified code is stored
      */
     public abstract function getHash($code);
+
+    /**
+     * Returns hash of template specified by the code.
+     *
+     * @param string $hash
+     * @return string
+     *
+     * @throws \OutOfBoundsException If no template with specified code is stored
+     */
+    public abstract function getCode($hash);
 
     /**
      * Returns sender of template specified by the code.
@@ -71,6 +94,16 @@ abstract class TemplateStorage
      * @throws \OutOfBoundsException If no template with specified code is stored
      */
     public abstract function getBody($code);
+
+    /**
+     * Returns default parameters of template specified by the code.
+     *
+     * @param string $code
+     * @return string[]
+     *
+     * @throws \OutOfBoundsException If no template with specified code is stored
+     */
+    public abstract function getDefaultParams($code);
 
     /**
      * Returns whether the template specified by the code is stored in this storage.

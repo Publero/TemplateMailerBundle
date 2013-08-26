@@ -5,6 +5,7 @@ parameters:
     publero_template_mailer.client.template.gearman.class: Publero\TemplateMailerBundle\Client\GearmanTemplateMailerClient
     publero_template_mailer.mailer.twig.class: Publero\TemplateMailerBundle\Mailer\TwigMailer
     publero_template_mailer.mailer.template.class: Publero\TemplateMailerBundle\Mailer\TemplateMailer
+    publero_template_mailer.mailer.template.stored.class: Publero\TemplateMailerBundle\Mailer\StoredTemplateMailer
 
 services:
     publero_template_mailer.gearman_client:

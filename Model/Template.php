@@ -11,7 +11,6 @@
 
 namespace Publero\TemplateMailerBundle\Model;
 
-
 class Template
 {
     /**

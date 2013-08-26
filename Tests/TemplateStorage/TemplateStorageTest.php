@@ -31,7 +31,10 @@ class TemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->client = $this->getMock('Publero\TemplateMailerBundle\Client\RemoteStorageClient', array('upload', 'remove'));
         $this->storage = $this->getMock(
             'Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage',
-            array('getHash', 'getSender', 'getSubject', 'getBody', 'isStored', 'isFresh', 'update', 'assignHash', 'persist', 'delete'),
+            array(
+                'getHash', 'getCode', 'getSender', 'getSubject', 'getBody', 'getDefaultParams', 'isStored', 'isFresh',
+                'update', 'assignHash', 'persist', 'delete', 'getTemplates'
+            ),
             array($this->client)
         );
     }

@@ -73,8 +73,11 @@ class PubleroTemplateMailerExtension extends Extension
             }
 
             if (!empty($config['template_storage']['template_processor'])) {
-                $definition = $container->getDefinition('publero_template_mailer.template.storage.doctrine');
-                $definition->replaceArgument(2, new Reference($config['template_storage']['template_processor']));
+                $definition = $container->getDefinition('publero_template_mailer.template.storage.abstract');
+                $definition->addMethodCall(
+                    'setTemplateProcessor',
+                    array(new Reference($config['template_storage']['template_processor']))
+                );
             }
         }
     }

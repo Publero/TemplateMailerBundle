@@ -28,9 +28,9 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected $manager;
 
-    public function __construct(RemoteStorageClient $remoteClient, ObjectManager $manager, TemplateProcessor $templateProcessor = null)
+    public function __construct(RemoteStorageClient $remoteClient, ObjectManager $manager)
     {
-        parent::__construct($remoteClient, $templateProcessor);
+        parent::__construct($remoteClient);
 
         $this->manager = $manager;
     }
@@ -67,6 +67,17 @@ class DoctrineTemplateStorage extends TemplateStorage
         return $this->getTemplateByCode($code)->getHash();
     }
 
+    public function getCode($hash)
+    {
+        /* @var Template $template */
+        $template = $this->getTemplateRepository()->findOneByHash($hash);
+        if ($template === null) {
+            throw new \OutOfBoundsException("template with hash '$hash' is not stored");
+        }
+
+        return $template->getCode();
+    }
+
     public function getSender($code)
     {
         return $this->getTemplateByCode($code)->getSender();
@@ -80,6 +91,11 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function getBody($code)
     {
         return $this->getTemplateByCode($code)->getBody();
+    }
+
+    public function getDefaultParams($code)
+    {
+        return $this->getTemplateByCode($code)->getDefaultParams();
     }
 
     public function isStored($code)
@@ -168,11 +184,11 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     protected function updateTemplate(Template $template)
     {
-        if ($this->isTemplateFresh($template)) {
+        $hasProcessor = null !== $this->templateProcessor;
+        if (!$hasProcessor && $this->isTemplateFresh($template)) {
             return;
         }
 
-        $hasProcessor = null !== $this->templateProcessor;
         $params = $template->getDefaultParams();
         $code = $template->getCode();
 

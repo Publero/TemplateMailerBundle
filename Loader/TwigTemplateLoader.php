@@ -52,10 +52,10 @@ class TwigTemplateLoader implements \Twig_LoaderInterface
 
     public function isFresh($name, $time)
     {
-        list($code, $part) = $this->parseName($name);
+        list($code) = $this->parseName($name);
 
         try {
-            return $this->storage->isStored($code);
+            return $this->storage->isFresh($code);
         } catch (\OutOfBoundsException $e) {
             throw new Twig_Error_Loader(sprintf('Template "%s" is not defined.', $name));
         }
@@ -69,9 +69,10 @@ class TwigTemplateLoader implements \Twig_LoaderInterface
      */
     private function parseName($name)
     {
-        if (!preg_match('/^([^:]+):([^:]+)$/', $name, $parts, $matches)) {
+        if (!preg_match('/^([^:]+):([^:]+)$/', $name, $matches)) {
             throw new \Twig_Error_Loader("invalid template name format");
         }
+        array_shift($matches);
 
         return $matches;
     }
