@@ -1,5 +1,6 @@
 Publero\TemplateMailerBundle\Model\Template:
     type: entity
+    table: publero_template_mailer_template
     id:
         id:
             type: integer

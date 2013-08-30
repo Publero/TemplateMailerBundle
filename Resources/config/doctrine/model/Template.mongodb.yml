@@ -1,5 +1,6 @@
 Publero\TemplateMailerBundle\Model\Template:
     type: document
+    collection: publero_template_mailer_template
     fields:
         id:
             id: true
