@@ -20,7 +20,8 @@
         "symfony/twig-bridge": "~2.3",
         "symfony/yaml": "~2.3",
         "doctrine/common": ">=2.2,<2.5",
-        "publero/net_gearman": "1.0.*@dev"
+        "publero/net_gearman": "~1.0@dev",
+        "pecserke/universal-mappings": "~1.1@alpha"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "1.2.*@dev",
@@ -28,8 +29,7 @@
         "doctrine/mongodb-odm": "1.0.*@dev",
         "doctrine/mongodb-odm-bundle": "3.0.*@dev"
     },
-    "target-dir": "Publero/TemplateMailerBundle",
     "autoload": {
-        "psr-0": { "Publero\\TemplateMailerBundle": "" }
+        "psr-4": { "Publero\\TemplateMailerBundle\\": "" }
     }
 }
