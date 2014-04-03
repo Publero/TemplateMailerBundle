@@ -49,9 +49,9 @@ class Template
     private $defaultParams;
 
     /**
-     * @var string
+     * @var \DateTime
      */
-    private $checksum;
+    private $uploadedAt;
 
     /**
      * @return int
@@ -71,7 +71,7 @@ class Template
 
     /**
      * @param string $code
-     * @return self
+     * @return $this
      */
     public function setCode($code)
     {
@@ -90,7 +90,7 @@ class Template
 
     /**
      * @param string $hash
-     * @return self
+     * @return $this
      */
     public function setHash($hash)
     {
@@ -109,7 +109,7 @@ class Template
 
     /**
      * @param string $sender
-     * @return self
+     * @return $this
      */
     public function setSender($sender)
     {
@@ -128,7 +128,7 @@ class Template
 
     /**
      * @param string $subject
-     * @return self
+     * @return $this
      */
     public function setSubject($subject)
     {
@@ -147,7 +147,7 @@ class Template
 
     /**
      * @param string $body
-     * @return self
+     * @return $this
      */
     public function setBody($body)
     {
@@ -166,7 +166,7 @@ class Template
 
     /**
      * @param array $defaultParams
-     * @return self
+     * @return $this
      */
     public function setDefaultParams(array $defaultParams)
     {
@@ -176,20 +176,20 @@ class Template
     }
 
     /**
-     * @return string
+     * @return \DateTime
      */
-    public function getChecksum()
+    public function getUploadedAt()
     {
-        return $this->checksum;
+        return $this->uploadedAt;
     }
 
     /**
-     * @param string $checksum
-     * @return self
+     * @param \DateTime $uploadedAt
+     * @return $this
      */
-    public function setChecksum($checksum)
+    public function setUploadedAt(\DateTime $uploadedAt = null)
     {
-        $this->checksum = $checksum;
+        $this->uploadedAt = $uploadedAt;
 
         return $this;
     }

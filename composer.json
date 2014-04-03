@@ -11,7 +11,7 @@
             "email": "tomas@pecserke.eu"
         }
     ],
-    "minimum-stability": "alpha",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.3.3",
         "symfony/config": "~2.3",
@@ -21,6 +21,7 @@
         "symfony/yaml": "~2.3",
         "doctrine/common": ">=2.2,<2.5",
         "publero/net_gearman": "~1.0@dev",
+        "pecserke/twig-doctrine-loader-bundle": "~1.0@dev",
         "pecserke/universal-mappings": "~1.1@alpha"
     },
     "require-dev": {
@@ -31,5 +32,10 @@
     },
     "autoload": {
         "psr-4": { "Publero\\TemplateMailerBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1.x-dev"
+        }
     }
 }

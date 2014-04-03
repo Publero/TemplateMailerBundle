@@ -21,4 +21,11 @@ interface TemplateProcessor
      * @return string
      */
     public function processTemplate($source, array $params);
+
+    /**
+     * @param string$name
+     * @param int $time
+     * @return bool
+     */
+    public function isTemplateFresh($name, $time);
 }

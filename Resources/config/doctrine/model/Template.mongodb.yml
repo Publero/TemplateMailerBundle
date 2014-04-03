@@ -20,5 +20,5 @@ Publero\TemplateMailerBundle\Model\Template:
             type: string
         defaultParams:
             type: hash
-        checksum:
-            type: string
+        uploadedAt:
+            type: datetime

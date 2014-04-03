@@ -26,14 +26,7 @@ services:
 
     publero_template_mailer.template.processor.twig:
         class: %publero_template_mailer.template.processor.twig.class%
-        arguments: [ @publero_template_mailer.twig ]
-
-    publero_template_mailer.twig:
-        class: %publero_template_mailer.twig.class%
-        parent: twig
-        calls:
-            - [ setLoader, [ @publero_template_mailer.twig.loader ] ]
-        public: false
+        arguments: [ @twig ]
 
     publero_template_mailer.twig.loader:
         class: %publero_template_mailer.twig.loader.class%

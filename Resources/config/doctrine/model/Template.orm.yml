@@ -22,6 +22,6 @@ Publero\TemplateMailerBundle\Model\Template:
             type: text
         defaultParams:
             type: json_array
-        checksum:
-            type: string
+        uploadedAt:
+            type: datetime
             nullable: true

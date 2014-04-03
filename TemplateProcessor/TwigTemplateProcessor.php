@@ -11,10 +11,7 @@
 
 namespace Publero\TemplateMailerBundle\TemplateProcessor;
 
-use Publero\TemplateMailerBundle\Loader\TwigTemplateLoader;
-use Publero\TemplateMailerBundle\TemplateStorage\TemplateStorage;
-
-class TwigTemplateProcessor implements TemplateStorageAwareTemplateProcessor
+class TwigTemplateProcessor implements TemplateProcessor
 {
     /**
      * @var \Twig_Environment
@@ -26,16 +23,13 @@ class TwigTemplateProcessor implements TemplateStorageAwareTemplateProcessor
         $this->twig = $twig;
     }
 
-    public function setTemplateStorage(TemplateStorage $storage)
-    {
-        $loader = $this->twig->getLoader();
-        if ($loader instanceof TwigTemplateLoader) {
-            $loader->setTemplateStorage($storage);
-        }
-    }
-
     public function processTemplate($name, array $params)
     {
         return $this->twig->loadTemplate($name)->render($params);
+    }
+
+    public function isTemplateFresh($name, $time)
+    {
+        $this->twig->isTemplateFresh($name, $time);
     }
 }

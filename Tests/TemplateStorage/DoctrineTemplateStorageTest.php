@@ -43,7 +43,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
     {
         $this->repository = $this->getMock(
             'Doctrine\Common\Persistence\ObjectRepository',
-            array('find', 'findBy', 'findOneBy', 'findAll', 'getClassName', 'findOneByCode')
+            array('find', 'findBy', 'findOneBy', 'findAll', 'getClassName')
         );
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
@@ -67,8 +67,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -85,8 +85,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -102,8 +102,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -119,8 +119,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -136,8 +136,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -154,8 +154,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -169,8 +169,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -183,8 +183,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -199,12 +199,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setBody('body');
         $template->setHash('hash');
         $template->setDefaultParams(array());
-        $template->setChecksum($this->storage->computeChecksum($template));
+        $template->setUploadedAt(new \DateTime('-1 minute'));
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -219,12 +219,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setBody('body');
         $template->setHash('hash');
         $template->setDefaultParams(array());
-        $template->setChecksum('different checksum');
+        $template->setUploadedAt(null);
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -238,12 +238,11 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setCode($code);
         $template->setBody('body');
         $template->setDefaultParams(array());
-        $template->setChecksum($this->storage->computeChecksum($template));
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -265,12 +264,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setSubject($subject);
         $template->setBody($body);
         $template->setDefaultParams($params);
-        $template->setChecksum('different checksum');
+        $template->setUploadedAt(new \DateTime('-1 minute'));
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
         $this->client
@@ -283,7 +282,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $this->storage->update($code);
 
         $this->assertEquals($hash, $template->getHash());
-        $this->assertEquals($template->getChecksum(), $this->storage->computeChecksum($template));
+        $this->assertEquals($template->getUploadedAt(), new \DateTime());
     }
 
     public function testUpdateOneFresh()
@@ -297,12 +296,12 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template->setHash($hash);
         $template->setBody('body');
         $template->setDefaultParams($params);
-        $template->setChecksum($this->storage->computeChecksum($template));
+        $template->setUploadedAt(new \DateTime());
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
         $this->client
@@ -325,7 +324,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template1->setBody('body1');
         $template1->setHash('hash1');
         $template1->setDefaultParams($params);
-        $template1->setChecksum($this->storage->computeChecksum($template1));
+        $template1->setUploadedAt(new \DateTime());
 
         $template2 = new Template();
         $template2->setCode('code2');
@@ -333,7 +332,7 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
         $template2->setSubject('subject2');
         $template2->setBody('body2');
         $template2->setDefaultParams($params);
-        $template2->setChecksum('different checksum');
+        $template1->setUploadedAt(new \DateTime('-1 munite'));
 
         $this->repository
             ->expects($this->once())
@@ -362,8 +361,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -378,8 +377,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -399,8 +398,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -417,8 +416,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -447,8 +446,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 
@@ -471,8 +470,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue($template))
         ;
 
@@ -499,8 +498,8 @@ class DoctrineTemplateStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->repository
             ->expects($this->once())
-            ->method('findOneByCode')
-            ->with($code)
+            ->method('findOneBy')
+            ->with(array('code' => $code))
             ->will($this->returnValue(null))
         ;
 

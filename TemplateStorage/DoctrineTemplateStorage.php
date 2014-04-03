@@ -19,7 +19,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Publero\TemplateMailerBundle\Client\RemoteStorageClient;
 use Publero\TemplateMailerBundle\Model\Template;
-use Publero\TemplateMailerBundle\TemplateProcessor\TemplateProcessor;
 
 class DoctrineTemplateStorage extends TemplateStorage
 {
@@ -54,7 +53,7 @@ class DoctrineTemplateStorage extends TemplateStorage
     protected function getTemplateByCode($code)
     {
         /* @var Template $template */
-        $template = $this->getTemplateRepository()->findOneByCode($code);
+        $template = $this->getTemplateRepository()->findOneBy(array('code' => $code));
         if ($template === null) {
             throw new \OutOfBoundsException("template '$code' is not stored");
         }
@@ -70,7 +69,7 @@ class DoctrineTemplateStorage extends TemplateStorage
     public function getCode($hash)
     {
         /* @var Template $template */
-        $template = $this->getTemplateRepository()->findOneByHash($hash);
+        $template = $this->getTemplateRepository()->findOneBy(array('hash' => $hash));
         if ($template === null) {
             throw new \OutOfBoundsException("template with hash '$hash' is not stored");
         }
@@ -100,7 +99,7 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     public function isStored($code)
     {
-        return null !== $this->getTemplateRepository()->findOneByCode($code);
+        return null !== $this->getTemplateRepository()->findOneBy(array('code' => $code));
     }
 
     public function getTemplates()
@@ -150,23 +149,20 @@ class DoctrineTemplateStorage extends TemplateStorage
      */
     protected function isTemplateFresh(Template $template)
     {
-        return null !== $template->getHash() && $template->getChecksum() === $this->computeChecksum($template);
-    }
+        if (null === $template->getHash() || null === $template->getUploadedAt()) {
+            return false;
+        }
 
-    /**
-     * @param Template $template
-     * @return string
-     */
-    public function computeChecksum(Template $template)
-    {
-        return sha1(
-            $template->getSender() .
-            $template->getSubject() .
-            $template->getBody() .
-            json_encode($template->getDefaultParams()) .
-            $template->getCode() .
-            $template->getHash()
-        );
+        if (null === $this->templateProcessor) {
+            return true;
+        }
+
+        $time = $template->getUploadedAt()->getTimestamp();
+
+        return $this->templateProcessor->isTemplateFresh($template->getSender(), $time) &&
+            $this->templateProcessor->isTemplateFresh($template->getSubject(), $time) &&
+            $this->templateProcessor->isTemplateFresh($template->getBody(), $time)
+        ;
     }
 
     public function update($code = null)
@@ -190,25 +186,24 @@ class DoctrineTemplateStorage extends TemplateStorage
         }
 
         $params = $template->getDefaultParams();
-        $code = $template->getCode();
 
         $sender = $hasProcessor ?
-            $this->templateProcessor->processTemplate($code . ':sender', $params) :
+            $this->templateProcessor->processTemplate($template->getSender(), $params) :
             $template->getSender()
         ;
         $subject = $hasProcessor ?
-            $this->templateProcessor->processTemplate($code . ':subject', $params) :
+            $this->templateProcessor->processTemplate($template->getSubject(), $params) :
             $template->getSubject()
         ;
         $body = $hasProcessor ?
-            $this->templateProcessor->processTemplate($code . ':body', $params) :
+            $this->templateProcessor->processTemplate($template->getBody(), $params) :
             $template->getBody()
         ;
 
         $hash = $this->persistRemote($sender, $subject, $body, $template->getDefaultParams(), $template->getHash());
 
         $template->setHash($hash);
-        $template->setChecksum($this->computeChecksum($template));
+        $template->setUploadedAt(new \DateTime());
     }
 
     public function assignHash($code, $hash)
@@ -219,7 +214,7 @@ class DoctrineTemplateStorage extends TemplateStorage
 
     public function persist($code, $sender, $subject, $body, array $defaultParams = array())
     {
-        $template = $this->getTemplateRepository()->findOneByCode($code);
+        $template = $this->getTemplateRepository()->findOneBy(array('code' => $code));
         if (null === $template) {
             $template = new Template();
             $template->setCode($code);
